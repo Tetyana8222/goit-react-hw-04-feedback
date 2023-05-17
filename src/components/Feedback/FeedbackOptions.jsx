@@ -10,7 +10,12 @@ export const FeedbackOptions = ({ options, onLeaveFeedback }) => {
     <ButtonBox>
       {options.map(el => {
         return (
-          <Button type="button" key={el} value={el} onClick={onLeaveFeedback}>
+          <Button
+            type="button"
+            key={el}
+            value={el}
+            onClick={() => onLeaveFeedback(el)}
+          >
             {el}
           </Button>
         );
