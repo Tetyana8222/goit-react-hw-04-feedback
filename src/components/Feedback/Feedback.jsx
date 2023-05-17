@@ -1,90 +1,56 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Container } from './Feedback.styled';
 import { FeedbackOptions } from './FeedbackOptions';
 import { Statistics } from '../Statistics/Statistics';
 import Section from '../Section/Section';
 import Notification from '../Notification/Notification';
 
-class Feedback extends Component {
-  // дефолтні пропси для Класу
-  static defaultProps = {
-    initialValueGood: 0,
-    initialValueNeutral: 0,
-    initialValueBad: 0,
-  };
-  //дефолтні проптипи для Класу, прописуються перед кастомними властивостями
-  // static PropTypes = {};
-  // поточне значення стану
-  state = {
-    good: this.props.initialValueGood,
-    neutral: this.props.initialValueNeutral,
-    bad: this.props.initialValueBad,
-  };
+const Feedback = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  const total = good + neutral + bad;
+  const positivePercentage = Math.round((good / total) * 100);
 
-  onLeaveFeedback = ev => {
-    console.log(ev);
-    if (ev.target.value === 'good') {
-      this.setState(prevState => {
-        return {
-          good: prevState.good + 1,
-        };
-      });
-    }
-    if (ev.target.value === 'neutral') {
-      this.setState(prevState => {
-        return {
-          neutral: prevState.neutral + 1,
-        };
-      });
-    }
-    if (ev.target.value === 'bad') {
-      this.setState(prevState => {
-        return {
-          bad: prevState.bad + 1,
-        };
-      });
+  const onLeaveFeedback = ev => {
+    switch (ev) {
+      case 'good':
+        setGood(state => state + 1);
+        break;
+      case 'neutral':
+        setNeutral(state => state + 1);
+        break;
+      case 'bad':
+        setBad(state => state + 1);
+        break;
+      default:
+        return;
     }
   };
 
-  calculateTotal = () => {
-    let total = this.state.good + this.state.neutral + this.state.bad;
-    return total;
-  };
-  calculatePositivePercentage = () => {
-    let percentage = (this.state.good / this.calculateTotal()) * 100;
-    return Number.parseInt(percentage);
-  };
-  render() {
-    return (
-      <Container>
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={['good', 'neutral', 'bad']}
-            onLeaveFeedback={this.onLeaveFeedback}
-          />
-        </Section>
-        <Section title="Statistics">
-          {this.calculateTotal() === 0 ? (
-            <Notification message="There is no feedback" />
-          ) : (
-            <Statistics
-              good={this.state.good}
-              neutral={this.state.neutral}
-              bad={this.state.bad}
-              total={this.calculateTotal()}
-              positivePercentage={this.calculatePositivePercentage()}
-            ></Statistics>
-          )}
-        </Section>
-      </Container>
-    );
-  }
-}
-
-Feedback.propTypes = {
-  initialValueGood: PropTypes.number,
-  initialValueNeutral: PropTypes.number,
-  initialValueBad: PropTypes.number,
+  return (
+    <Container>
+      <Section title="Please leave feedback">
+        <FeedbackOptions
+          options={['good', 'neutral', 'bad']}
+          onLeaveFeedback={onLeaveFeedback}
+        />
+      </Section>
+      <Section title="Statistics">
+        {total === 0 ? (
+          <Notification message="There is no feedback" />
+        ) : (
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={total}
+            positivePercentage={positivePercentage}
+          ></Statistics>
+        )}
+      </Section>
+    </Container>
+  );
 };
+
 export default Feedback;
